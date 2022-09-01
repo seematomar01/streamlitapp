@@ -1,3 +1,5 @@
+
+
 import urllib.request
 from pathlib import Path
 from typing import List, NamedTuple, Optional
@@ -110,8 +112,7 @@ def MarkAttendence(name):
             now = datetime.now()
             timestr = now.strftime('%H:%M')
             f.writelines(f'\n{name}, {timestr}')
-            statment = str('welcome to seasia' + name)
-
+            
 for cl in myList :
     curimg = cv2.imread(f'{path}/{cl}')
     employeeImg.append(curimg)
@@ -277,13 +278,23 @@ def employee_details_fetch(serial = None,name= None,department = None):
 
 
 
+from PIL import Image
 
 def main():
-    image = im.open('seasia-infotech-largex5-logo.png')
+    st.markdown("<h1 style='text-align: center; color: #faa108;'>Welcome to</h1>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1,6,1])
 
-    st.image(image, caption='Welcome to Seasia')
+    with col1:
+        st.write("")
 
-    st.header("Moogle Labs Attendance System")
+    with col2:
+        st.image("Screenshot (1).png")
+
+    with col3:
+        st.write("")
+
+    
+   
     
 
 
@@ -291,17 +302,18 @@ def main():
 
     pages = {
 
-        "Streaming ": employ_recog,        
-        "Admin ": Admin,
-        "Attendance": Check_attendance
+        "Mark Attendance ": employ_recog,        
+        "Add User ": Admin,
+        "Check Attendance": Check_attendance
     }
     page_titles = pages.keys()
-
+    #st.sidebar.image("seasia-infotech-largex5-logo.png", use_column_width=True)
+    st.markdown("<h1 style='text-align: center; color: #faa108;'>Attendance System</h1>", unsafe_allow_html=True)
     page_title = st.sidebar.selectbox(
         "Choose the app mode",
         page_titles,
     )
-    st.subheader(page_title)
+    #st.subheader(page_title)
 
     page_func = pages[page_title]
     page_func()
@@ -366,14 +378,20 @@ def emprec0(img):
     return img   
 
 
-def emprec1(img):    
+def emprec1(img):  
+    #img = cv2.imread(path)
+    #if(img is not None):
+        #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    
+        #facesInFrame = face_rec.face_locations(img)
+
+        #encodeFacesInFrame = face_rec.face_encodings(img, facesInFrame)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     
     
     facesInFrame = face_rec.face_locations(img)
 
     encodeFacesInFrame = face_rec.face_encodings(img, facesInFrame)
-
 
     for encodeFace, faceloc in zip(encodeFacesInFrame, facesInFrame) :
         matches = face_rec.compare_faces(EncodeList, encodeFace)
@@ -426,7 +444,7 @@ def Admin():
                 st.success("Logged In as {}".format(user))
                 
                 # Tasks For Only Logged In Users
-                if st.checkbox("ADD_USER"):  
+                if st.checkbox("ADD NEW USER"):  
                     st.session_state['ADD'] = True                              
                     employee_seriel_no=st.text_input('Employee Seriel no')
                     name =st.text_input('Name')
@@ -442,14 +460,27 @@ def Admin():
                         #cv2_img = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
                         img = np.array(cv2_img)
 
-                        if st.checkbox("ADD_USER_TO_DB"):  
+                        if st.checkbox("ADD USER TO_DATABASE"):  
                             employee_creation(employee_seriel_no,name,department,img)
                             st.image(img)
 
     
 def employ_recog():
-        st.title("Webcam Application")
-        run = st.checkbox('Run')
+        st.markdown("<h1 style='text-align: center; color: #faa108;'>Webcam Application</h1>", unsafe_allow_html=True)
+        
+        col1, col2, col3 , col4, col5 = st.columns(5)
+
+        with col1:
+            pass
+        with col2:
+            pass
+        with col4:
+            pass
+        with col5:
+            pass
+        with col3 :
+            run = st.button(label="RUN")     
+            st.balloons()
         while run:
             ret0, frame0 = cam0.read()  
 
@@ -473,20 +504,25 @@ def Check_attendance():
             if user == 'b' and passwd == 'b' :
                 st.session_state['loggedIn'] = True
                 st.success("Logged In as {}".format(user))
-                if st.checkbox('check attendence'):
+                if st.checkbox('Check Attendence'):
                     st.session_state['In'] = True
-        
+                    col1, col2, col3 = st.columns(3)
 
-                    Emp_ID  = st.text_input('Employee Seriel no')
-                    Emp_name = st.text_input('Employee_name')
+                    with col1:
+                        st.header("EMP ID")
+                        Emp_ID  = st.text_input('Employee ID')
 
-
-
-                    option = st.selectbox('choose department',('select department','Machine Learning', 'Design', 'Digital marketing'))
-
-                    Department = option
+                    with col2:
+                        st.header("EMP NAME")
+                        Emp_name  = st.text_input('Employee Name')
+                    with col3:
+                        st.header("DEPARTMENT")
+                        option = st.selectbox('choose department',('select department','Machine Learning', 'Design', 'Digital marketing'))
+                        Department = option
+           
                     print(Emp_ID,Emp_name,Department)
-                    if st.checkbox('show attendence'):
+                       
+                    if st.checkbox('Show Attendence'):
 
                         start_date = st.date_input('Start date', today)
                         end_date = st.date_input('End date', today)
@@ -504,45 +540,47 @@ def Check_attendance():
                                 emp_name = employee_details_fetch(serial = e)['Emp_Name'].iloc[0]
                                 dep = employee_details_fetch(serial = e)['Department'].iloc[0]                                
                                 dafa = employee_fetch(e)
-
+                                print(e)
 
                                 #st.dataframe(work(dafa[['Status','time']]))
                                 #daka = daka.append(employee_fetch(e))
-                                
+
                                 dafa['time'] = pd.to_datetime(dafa['time'])
-                                   
+
 
                                 mask = (dafa['time'].dt.date <= end_date ) & (dafa['time'].dt.date >= start_date )
                                 dafa = dafa.loc[mask]        
 
-                                
-                            
+
+
 
                                 dafa = (dafa[['Status','time']])
+                                print(dafa)
 
-                                daka =        daka.append(empdf(e,emp_name,dep,dafa)) 
+                                daka = daka.append(empdf(e,emp_name,dep,dafa)) 
 
                                 #dft = work(dafa)
                             st.dataframe(daka.reset_index( drop=True)) 
                             if st.checkbox('show working_hours'):
-                                df3 = work(df2)
+                                #df3 = work(df2)
 
-     
-                                #df3 = df3.applymap(str)
 
-                                st.dataframe(df3)    
+
+                               # df3 = df3.applymap(str)
+
+                               # st.dataframe(df3)    
                                 #dfz = df3[['time_in','Working hours']]
-                                #dfz['Working hours'] = dfz['Working hours'].astype(float)
-                                #dfz.index = dfz['time_in']
-                                #st.bar_chart(dfz)
+                               # dfz['Working hours'] = dfz['Working hours'].astype(float)
+                               # dfz.index = dfz['time_in']
+                               # st.bar_chart(dfz)
 
 
 
-                             
+
 
                         else :
                             st.warning('Kindly check details') 
-    
+
 
 
 
